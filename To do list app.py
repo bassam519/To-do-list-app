@@ -1,48 +1,49 @@
+import tkinter as tk
+from tkinter import messagebox, simpledialog
+
 to_do_list = []
 
-def Show_Menu():
-    print("\n1-Add tasks\n2-View tasks\n3-Remove tasks\n4-Exit the app\n")
-    
-def add_task(task):
-    to_do_list.append(task)
-    print("Task added!")
-    
+def add_task():
+    task = simpledialog.askstring("Add Task", "Enter the task to add:")
+    if task:
+        to_do_list.append(task)
+        update_task_list()
+        messagebox.showinfo("Success", "Task added!")
+
 def view_tasks():
     if not to_do_list:
-        print("No tasks found")
+        messagebox.showinfo("Info", "No tasks found.")
     else:
-        for task in to_do_list:
-            print(f"{task}") 
-        
-def delete_task(task):
-    try:
-        if task not in to_do_list:
-            raise Exception("Task not found in list")
-    except Exception as error:
-        print(f"{error}")
-    else:
-        to_do_list.remove(task)
-        print("Task removed")
+        tasks = "\n".join(to_do_list)
+        messagebox.showinfo("Tasks", tasks)
 
-def to_do_list_app():
-    print("Welcome in our to do list app\n")
-    
-    while True:
-        Show_Menu()
-        operation = int(input("Choose an operation:"))
-        if operation == 1:
-            task = input("Enter the task to add:")
-            add_task(task)
-        elif operation == 2:
-            view_tasks()
-        elif operation == 3:
-            task = input("Enter the task to remove:")
-            delete_task(task)
-        elif operation == 4:
-            print("Goodbye!")
-            break
-        else:
-            print("Not found operation please choose (1-4)")
-    
-        
-    
+def delete_task():
+    task = simpledialog.askstring("Remove Task", "Enter the task to remove:")
+    if task in to_do_list:
+        to_do_list.remove(task)
+        update_task_list()
+        messagebox.showinfo("Success", "Task removed!")
+    else:
+        messagebox.showerror("Error", "Task not found in list.")
+
+def update_task_list():
+    task_list.delete(0, tk.END) 
+    for task in to_do_list:
+        task_list.insert(tk.END, task) 
+
+root = tk.Tk()
+root.title("To-Do List App")
+
+add_button = tk.Button(root, text="Add Task", command=add_task)
+add_button.pack(pady=10)
+
+view_button = tk.Button(root, text="View Tasks", command=view_tasks)
+view_button.pack(pady=10)
+
+remove_button = tk.Button(root, text="Remove Task", command=delete_task)
+remove_button.pack(pady=10)
+
+task_list = tk.Listbox(root, width=50, height=10)
+task_list.pack(pady=10)
+
+root.mainloop()
